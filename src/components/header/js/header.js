@@ -55,7 +55,7 @@ function mobileInputOpen() {
     })
 }
 mobileInputOpen()
-// ===========================MOBILE MENU OPEN-CLOSE==================
+    // ===========================MOBILE MENU OPEN-CLOSE==================
 function menuOpen() {
     menuBtnRef.addEventListener("click", () => {
         mobileMenuRef.classList.toggle("mobile-menu-opened");
