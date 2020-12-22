@@ -4,7 +4,7 @@ import './auth.css';
 import signUp from './template/signUp.hbs';
 import logOut from './template/logOut.hbs';
 import { modalBackDrop } from '../modal/modalBackDrop';
-import {loggedUser} from '../../data/data';
+import {data} from '../../data/data';
 
 
 const signUpHeader = document.querySelector('#signUpHeader');
@@ -24,36 +24,36 @@ let user = {
     password: '',
 };
 
-const gatherInfo = () => {
-    const mistakeEmail = authForm.querySelector('.mistake__email');
-    const mistakePassword = authForm.querySelector('.mistake__password');
-    if (validator.isEmail(authForm.email.value)) {
-        return user = {
-            email: authForm.email.value,
-            password: authForm.password.value,
-        }
-    }else { mistakeEmail.textContent = 'Not good email'}
-};
-    
-
-const getRefs = () => {
-    const refsLogging = {};
-    refsLogging.authForm = document.forms.authForm;
-    return refsLogging
-};
-
 
 // ================================SIGN UP=============================
 const onHeaderSignUp = (e) => {
     modalBackDrop(signUp());
+    const authForm = document.forms.authForm;
 
     const onXclose = () => {
         container.classList.remove('is-open');
     };
-    authForm.close.addEventListener('click', onXclose);
 
-    getRefs();
-
+    const gatherInfo = () => {
+        const mistakeEmail = authForm.querySelector('.mistake__email');
+        const mistakePassword = authForm.querySelector('.mistake__password');
+        const options = { minLength: 6, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 };
+       
+        if (validator.isEmail(authForm.email.value)) {
+            mistakeEmail.textContent = '';
+            user.email = authForm.email.value;
+        } else { mistakeEmail.textContent = "gadkiy ya"
+        };
+        if (validator.isStrongPassword(authForm.password.value, options)) {
+            mistakePassword.textContent = '';
+            user.password= authForm.password.value;
+        } else { mistakePassword.textContent = "gadkiy ty"
+        };
+        return user
+        
+    };
+    
+       
     if (e.target.dataset.btn === 'signup') {
         authForm.logIn.classList.remove('active');
         authForm.signUp.classList.add('active');
@@ -66,32 +66,46 @@ const onHeaderSignUp = (e) => {
         e.preventDefault();
         gatherInfo();
 
+
+
         const onSignUpBtn = async (e) => {
-            authForm.logIn.classList.remove('active');
-            authForm.signUp.classList.add('active');
-            const result = await axios.post(`${url}/auth/register`, { ...user });
-            loggedUser.signUpUser = { ...result.data };
-            // loggedUser.isAuth = true;
-            console.log(loggedUser.signUpUser);
-            // onLogInBtn();
-            // container.classList.remove('is-open');
+            try {
+                authForm.logIn.classList.remove('active');
+                authForm.signUp.classList.add('active');
+                const result = await axios.post(`${url}/auth/register`, { ...user });
+                // loggedUser.signUpUser = { ...result.data };
+                // loggedUser.isAuth = true;
+                // console.log(loggedUser.signUpUser);
+                authForm.signUp.classList.remove('active');
+                authForm.logIn.classList.add('active');
+                onLogInBtn();
+                // container.classList.remove('is-open');
+            } catch {
+
+            }
         };
 
         const onLogInBtn = async (e) => {
-            authForm.signUp.classList.remove('active');
-            authForm.logIn.classList.add('active'); 
-            const result = await axios.post(`${url}/auth/login`, { ...user });
-            loggedUser.logInUser = { ...result.data.user }
-            localStorage.setItem('accessToken', JSON.stringify(result.data.accessToken));
-            loggedUser.accessToken = result.data.accessToken;
-            loggedUser.isAuth = true;
-            console.log(loggedUser);
-            container.classList.remove('is-open');
-         };
+            try {
+                authForm.signUp.classList.remove('active');
+                authForm.logIn.classList.add('active');
+                const result = await axios.post(`${url}/auth/login`, { ...user });
+                data.user = { ...result.data.user }
+                localStorage.setItem('accessToken', JSON.stringify(result.data.accessToken));
+                data.auth.accessToken = result.data.accessToken;
+                data.auth.isAuth = true;
+                container.classList.remove('is-open');
+            } catch (erroe) {
+               console.log(error);
+            }
+        };
+        
         authForm.signUp.addEventListener('click', onSignUpBtn);
         authForm.logIn.addEventListener('click', onLogInBtn);
     };
-    authForm.addEventListener('submit', onSubmitBtn );
+    authForm.close.addEventListener('click', onXclose);
+    authForm.addEventListener('submit', onSubmitBtn);
+    authForm.addEventListener('input', gatherInfo);
 };
 
 
@@ -100,5 +114,36 @@ signUpDrop.addEventListener('click', onHeaderSignUp);
 signInHeader.addEventListener('click', onHeaderSignUp);
 signInDrop.addEventListener('click', onHeaderSignUp);
 
-// ==================END=============================================
+// ====================================LOG OUT============================================
 
+const logOutForm = () => {
+    modalBackDrop(logOut());
+
+    const btnXcls = document.querySelector('.authForm__btn_cls');
+    const authFormLogOut = document.querySelector('.authForm__btn_logOut');
+    const authFormExit = document.querySelector('.authForm__btn_exit');
+    authFormLogOut.classList.add('active')
+
+    const onXclose = () => {
+        container.classList.remove('is-open');
+    };
+
+    btnXcls.addEventListener('click', onXclose);
+    authFormExit.addEventListener('click', onXclose);
+
+    const logOutUser = () => {
+        if (localStorage.getItem('accessToken')) {
+            data.user = {};
+            localStorage.removeItem('accessToken');
+            data.auth.accessToken = '';
+            data.auth.isAuth = false;
+        };
+        //выйти в стандартную форму хедера перед выходом из модалки
+        console.log(data);
+
+        container.classList.remove('is-open');
+        
+    };
+    authFormLogOut.addEventListener('click', logOutUser);
+};
+// logOutForm()
