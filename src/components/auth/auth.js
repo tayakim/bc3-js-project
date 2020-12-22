@@ -3,9 +3,11 @@ import validator from 'validator';
 import './auth.css';
 import signUp from './template/signUp.hbs';
 import logOut from './template/logOut.hbs';
+import userLogged from './template/userLogged.hbs';
+import userDrop from './template/userDrop.hbs';
+import login from './template/login.hbs'
 import { modalBackDrop } from '../modal/modalBackDrop';
 import {data} from '../../data/data';
-
 
 const signUpHeader = document.querySelector('#signUpHeader');
 const signUpDrop = document.querySelector('#signUpDrop');
@@ -14,6 +16,35 @@ const signInDrop = document.querySelector('#signInDrop');
 const container = document.querySelector('.modal');
 
 
+// ===============================HEADER==============================
+const headerAuthMobile = document.querySelector('.header-auth-mobile');
+const headerAuth = document.querySelector('.header-auth');
+// console.log(headerAuthMobile);
+
+const onLoadAuth = () => {
+    if (localStorage.getItem('accessToken')) {
+        data.auth.isAuth = true;
+        data.auth.accessToken = localStorage.getItem('accessToken')
+
+        headerAuth.innerHTML = userLogged()
+        const loggedUserCarts = document.querySelector('#loggedUser__carts');
+        const loggedUserExit = document.querySelector('#loggedUser__exit');
+
+
+
+      loggedUserExit.addEventListener('click', logOutForm)
+        // проверить почему 2 парі кавічек в токене 
+        //и что Юра подтянет всю остальную инфу по клиенту
+
+        console.log(data);
+    } else {
+        console.log(data);
+    }
+
+}
+window.addEventListener('DOMContentLoaded', onLoadAuth);
+
+// =========================================================================
 
 
 
@@ -35,21 +66,26 @@ const onHeaderSignUp = (e) => {
     };
 
     const gatherInfo = () => {
-        const mistakeEmail = authForm.querySelector('.mistake__email');
-        const mistakePassword = authForm.querySelector('.mistake__password');
-        const options = { minLength: 6, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 };
+        // const mistakeEmail = authForm.querySelector('.mistake__email');
+        // const mistakePassword = authForm.querySelector('.mistake__password');
+        // const options = { minLength: 6, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 };
        
-        if (validator.isEmail(authForm.email.value)) {
-            mistakeEmail.textContent = '';
-            user.email = authForm.email.value;
-        } else { mistakeEmail.textContent = "gadkiy ya"
+        // if (validator.isEmail(authForm.email.value)) {
+        //     mistakeEmail.textContent = '';
+        //     user.email = authForm.email.value;
+        // } else { mistakeEmail.textContent = "gadkiy ya"
+        // };
+        // if (validator.isStrongPassword(authForm.password.value, options)) {
+        //     mistakePassword.textContent = '';
+        //     user.password= authForm.password.value;
+        // } else { mistakePassword.textContent = "gadkiy ty"
+        // };
+        // return user
+
+        return user = {
+            email: authForm.email.value,
+            password: authForm.password.value,
         };
-        if (validator.isStrongPassword(authForm.password.value, options)) {
-            mistakePassword.textContent = '';
-            user.password= authForm.password.value;
-        } else { mistakePassword.textContent = "gadkiy ty"
-        };
-        return user
         
     };
     
@@ -80,8 +116,8 @@ const onHeaderSignUp = (e) => {
                 authForm.logIn.classList.add('active');
                 onLogInBtn();
                 // container.classList.remove('is-open');
-            } catch {
-
+            } catch (error) {
+             console.log('error', error.response.data);
             }
         };
 
@@ -93,10 +129,12 @@ const onHeaderSignUp = (e) => {
                 data.user = { ...result.data.user }
                 localStorage.setItem('accessToken', JSON.stringify(result.data.accessToken));
                 data.auth.accessToken = result.data.accessToken;
+                // console.log('data.auth.accessToken', data.auth.accessToken);
                 data.auth.isAuth = true;
+                headerAuth.innerHTML = userLogged();
                 container.classList.remove('is-open');
-            } catch (erroe) {
-               console.log(error);
+            } catch (error) {
+               console.dir(error);
             }
         };
         
@@ -137,6 +175,7 @@ const logOutForm = () => {
             localStorage.removeItem('accessToken');
             data.auth.accessToken = '';
             data.auth.isAuth = false;
+            headerAuth.innerHTML = login()
         };
         //выйти в стандартную форму хедера перед выходом из модалки
         console.log(data);
