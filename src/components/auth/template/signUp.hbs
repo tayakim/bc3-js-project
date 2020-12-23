@@ -1,11 +1,9 @@
-<div class="auth__wrap"></div>
-{{!-- <div class="logOut__wrap"></div> --}}
-
 <form class="authForm" name="authForm">
     <button type="button" class="authForm__btn_cls" name="close">
-        <svg class="authForm__slsBtn_svg" width="14px" height="14px">
+        {{!-- <svg class="authForm__slsBtn_svg" width="14px" height="14px">
             <use href="./images/auth/close-24px.svg" class="authForm__svg"></use>
-        </svg>
+        </svg> --}}
+        <img src="{{./images/auth/close-24px.svg}}" alt="">
     </button>
     <div class="authForm__google">
         <p class="authForm__txt">
@@ -20,10 +18,12 @@
     </div>
     <div class="authForm__main">
         <p class="authForm__txt">
-            Или войдите в приложение используя e-mail и пароль:
+            Войдите в приложение используя e-mail и пароль:
         </p>
-        <input type="text" name="email" class="authForm__input" placeholder="Email" />
-        <input type="text" name="password" class="authForm__input" placeholder="Password" />
+        <p class="mistake__email"></p>
+        <input type="email" name="email" class="authForm__input" placeholder="Email" />
+        <p class="mistake__password"></p>
+        <input type="password" autocomplete="of" name="password" class="authForm__input" placeholder="Password" />
         <div class="authForm__buttons">
             <button type="submit" name="logIn" class="authForm__btn_logIn active">
                 Войти
