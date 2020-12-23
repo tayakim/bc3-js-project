@@ -1,8 +1,13 @@
 import categories from '../templates/categories.hbs';
-
-// ===========================REFS===================================
 const categoriesMarkup = categories()
 const categoriesList = document.querySelector('.categories-filter')
+categoriesList.insertAdjacentHTML('beforeend', categoriesMarkup)
+const categoriesTabletList = document.querySelector('.categories-filter-tablet')
+const categoriesMobileList = document.querySelector('.categories-filter-mobile')
+const filterItem = document.querySelectorAll(".filter-item");
+
+// ===========================REFS===================================
+
 const mobileFilters = document.querySelector('.categories-filter-mobile')
 const mobileFiltersBtn = document.querySelector('.mobile-filters-wrapper')
 const tabletFilters = document.querySelector(".categories-filter-tablet");
@@ -15,7 +20,8 @@ const mobileHeaderLogo = document.querySelector('.header__logo')
 const menuBtnRef = document.querySelector(".mobile-burger");
 const mobileMenuRef = document.querySelector(".mobile-menu-closed");
 const mobileCloseRef = document.querySelector(".close-menu")
-categoriesList.insertAdjacentHTML('beforeend', categoriesMarkup)
+const clearCategoryBtn = document.querySelector('.clear-filters-wrapper')
+const clearCategoryMobileBtn = document.querySelector('.mobile-clear-filters-wrapper')
 
 // ===========================MOBILE FILTER OPEN-CLOSE===============
 function openMobileFilters() {
@@ -55,7 +61,8 @@ function mobileInputOpen() {
     })
 }
 mobileInputOpen()
-    // ===========================MOBILE MENU OPEN-CLOSE==================
+
+// ===========================MOBILE MENU OPEN-CLOSE==================
 function menuOpen() {
     menuBtnRef.addEventListener("click", () => {
         mobileMenuRef.classList.toggle("mobile-menu-opened");
@@ -65,3 +72,29 @@ function menuOpen() {
     })
 }
 menuOpen()
+
+// ===========================ACTIVE CATEGORY===========================
+
+function activeCategory(e) {
+    if (e.target.nodeName === 'A') {
+        clearActiveCategory();
+        if (e.target.classList.contains('active-category')) {
+            return;
+    }
+    e.target.classList.add('active-category');
+    }
+}
+
+categoriesList.addEventListener('click', activeCategory)
+categoriesTabletList.addEventListener('click', activeCategory)
+categoriesMobileList.addEventListener('click', activeCategory)
+clearCategoryBtn.addEventListener('click', clearActiveCategory)
+clearCategoryMobileBtn.addEventListener('click', clearActiveCategory)
+
+function clearActiveCategory() {
+  if (document.querySelector('.active-category')) {
+    let activeCategoryATM = document.querySelector('.active-category');
+    activeCategoryATM.classList.remove('active-category');
+    // closeCategory();
+  }
+}
